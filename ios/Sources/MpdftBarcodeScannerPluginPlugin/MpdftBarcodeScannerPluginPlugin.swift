@@ -1,23 +1,45 @@
 import Foundation
 import Capacitor
 
-/**
- * Please read the Capacitor iOS Plugin Development Guide
- * here: https://capacitorjs.com/docs/plugins/ios
- */
-@objc(MpdftBarcodeScannerPluginPlugin)
-public class MpdftBarcodeScannerPluginPlugin: CAPPlugin, CAPBridgedPlugin {
-    public let identifier = "MpdftBarcodeScannerPluginPlugin"
-    public let jsName = "MpdftBarcodeScannerPlugin"
-    public let pluginMethods: [CAPPluginMethod] = [
-        CAPPluginMethod(name: "echo", returnType: CAPPluginReturnPromise)
-    ]
-    private let implementation = MpdftBarcodeScannerPlugin()
+@objc(MpdftBarcodeScannerPlugin)
+public class MpdftBarcodeScannerPlugin: CAPPlugin, CAPBridgedPlugin {
 
-    @objc func echo(_ call: CAPPluginCall) {
-        let value = call.getString("value") ?? ""
-        call.resolve([
-            "value": implementation.echo(value)
-        ])
+    public let identifier = "MpdftBarcodeScannerPlugin"
+    public let jsName = "MpdftBarcodeScanner"
+    public let pluginMethods: [CAPPluginMethod] = [
+        CAPPluginMethod(name: "scan", returnType: CAPPluginReturnPromise)
+    ]
+
+    private var pendingCall: CAPPluginCall?
+
+    @objc func scan(_ call: CAPPluginCall) {
+        self.pendingCall = call
+        DispatchQueue.main.async {
+            let vc = BarcodeScannerViewController()
+            vc.delegate = self
+            vc.modalPresentationStyle = .fullScreen
+            self.bridge?.viewController?.present(vc, animated: true)
+        }
+    }
+}
+
+extension MpdftBarcodeScannerPlugin: BarcodeScannerDelegate {
+
+    func didScan(value: String, format: String) {
+        var result = JSObject()
+        result["value"] = value
+        result["format"] = format
+        result["cancelled"] = false
+        pendingCall?.resolve(result)
+        pendingCall = nil
+    }
+
+    func didCancel() {
+        var result = JSObject()
+        result["value"] = ""
+        result["format"] = ""
+        result["cancelled"] = true
+        pendingCall?.resolve(result)
+        pendingCall = nil
     }
 }

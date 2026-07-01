@@ -1,3 +1,9 @@
-export interface MpdftBarcodeScannerPluginPlugin {
-  echo(options: { value: string }): Promise<{ value: string }>;
+export interface MpdftBarcodeScannerPlugin {
+  scan(): Promise<ScanResult>;
+}
+
+export interface ScanResult {
+  value: string;
+  format: string;
+  cancelled: boolean;
 }

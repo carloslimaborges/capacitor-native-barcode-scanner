@@ -1,10 +1,10 @@
 import { registerPlugin } from '@capacitor/core';
 
-import type { MpdftBarcodeScannerPluginPlugin } from './definitions';
+import type { MpdftBarcodeScannerPlugin } from './definitions';
 
-const MpdftBarcodeScannerPlugin = registerPlugin<MpdftBarcodeScannerPluginPlugin>('MpdftBarcodeScannerPlugin', {
-  web: () => import('./web').then((m) => new m.MpdftBarcodeScannerPluginWeb()),
+const MpdftBarcodeScanner = registerPlugin<MpdftBarcodeScannerPlugin>('MpdftBarcodeScanner', {
+  web: () => import('./web').then((m) => new m.MpdftBarcodeScannerWeb()),
 });
 
 export * from './definitions';
-export { MpdftBarcodeScannerPlugin };
+export { MpdftBarcodeScanner };

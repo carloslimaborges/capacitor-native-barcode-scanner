@@ -1,10 +1,9 @@
 import { WebPlugin } from '@capacitor/core';
 
-import type { MpdftBarcodeScannerPluginPlugin } from './definitions';
+import type { MpdftBarcodeScannerPlugin, ScanResult } from './definitions';
 
-export class MpdftBarcodeScannerPluginWeb extends WebPlugin implements MpdftBarcodeScannerPluginPlugin {
-  async echo(options: { value: string }): Promise<{ value: string }> {
-    console.log('ECHO', options);
-    return options;
+export class MpdftBarcodeScannerWeb extends WebPlugin implements MpdftBarcodeScannerPlugin {
+  async scan(): Promise<ScanResult> {
+    throw this.unimplemented('MpdftBarcodeScanner is not available on web.');
   }
 }
